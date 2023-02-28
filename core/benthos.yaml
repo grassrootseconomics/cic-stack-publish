@@ -1,0 +1,37 @@
+input:
+  label: cic_chain_events
+  nats_jetstream:
+    urls:
+      - nats://nats:4222
+    subject: CHAIN.*
+    durable: benthos_sub
+    stream: CHAIN
+    deliver: all
+pipeline:
+  processors:
+    - label: enum_status_enrich
+      bloblang: "root = this\n\nroot.enumStatus = if this.success == true {\n  \"SUCCESS\"\n} else {\n  \"REVERTED\"  \n}"
+output:
+  broker:
+    outputs:
+      - label: cic_custodial_otx_marker
+        sql_raw:
+          driver: postgres
+          dsn: postgres://postgres:postgres@postgres:5432/cic_custodial?sslmode=disable
+          query: |-
+            UPDATE otx_dispatch SET "status" = $2, "block" = $3 WHERE otx_dispatch.id = (
+                SELECT otx_dispatch.id FROM otx_dispatch
+                INNER JOIN otx_sign ON otx_dispatch.otx_id = otx_sign.id
+                WHERE otx_sign.tx_hash = $1
+                AND otx_dispatch.status = 'IN_NETWORK'
+            )
+          args_mapping: |-
+            root = [
+              this.transactionHash,
+              this.enumStatus,
+              this.block,
+            ]
+      - label: logg
+        stdout:
+          codec: lines
+
