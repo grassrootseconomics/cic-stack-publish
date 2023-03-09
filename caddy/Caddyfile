@@ -1,0 +1,3 @@
+custodial.YOURPUBLICDOMAIN {
+    reverse_proxy cic-custodial:5000
+}

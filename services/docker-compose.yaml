@@ -14,17 +14,17 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - cic      
+      - cic
   postgres:
-    image: postgres:14-alpine
+    image: postgres:15-alpine
     restart: unless-stopped
     user: postgres
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=cic_custodial
     volumes:
       - cic-deploy-pg:/var/lib/postgresql/data
+      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     ports:
       - "127.0.0.1:5432:5432"
     healthcheck:
@@ -33,7 +33,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - cic      
+      - cic
   nats:
     image: nats:2.9
     restart: unless-stopped
@@ -44,7 +44,7 @@ services:
       - "127.0.0.1:4222:4222"
       - "127.0.0.1:8222:8222"
     networks:
-      - cic      
+      - cic
   asynqmon:
     image: hibiken/asynqmon
     restart: unless-stopped
@@ -56,7 +56,8 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - cic      
+      - cic
+
 volumes:
   cic-deploy-pg:
     driver: local
@@ -67,4 +68,5 @@ volumes:
 
 networks:
   cic:
-    external: true       
+    external: true
+     
