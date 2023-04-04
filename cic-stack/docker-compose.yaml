@@ -14,9 +14,7 @@ services:
     ports:
       - '5001:5000'
     labels:
-      - com.centurylinklabs.watchtower.enable=true      
-    networks:
-      - cic      
+      - com.centurylinklabs.watchtower.enable=true
   cic-custodial:
     image: ghcr.io/grassrootseconomics/cic-custodial/cic-custodial:latest
     restart: unless-stopped
@@ -27,9 +25,27 @@ services:
     ports:
       - '5002:5000'
     labels:
-      - com.centurylinklabs.watchtower.enable=true      
-    networks:
-      - cic         
+      - com.centurylinklabs.watchtower.enable=true
+  cic-graph:
+    image: hasura/graphql-engine:v2.20.0
+    restart: unless-stopped
+    environment:
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_ADMIN_SECRET: secret
+    env_file:
+      - graph.env
+    ports:
+      - '8081:8080'
+  cic-ussd:
+    image: cic-ussd:latest
+    restart: unless-stopped
+    env_file:
+      - ussd.env
+    ports:
+      - '9001:9000'
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
 networks:
-  cic:
-    external: true       
+  default:
+    external: true
+    name: cic

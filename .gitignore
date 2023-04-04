@@ -1,3 +1,4 @@
 */*.env
 */*otel-collector-config.yaml
 */*vector.toml
+.idea/
