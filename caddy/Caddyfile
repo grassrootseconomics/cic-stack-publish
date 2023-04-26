@@ -1,3 +1,7 @@
 custodial.YOURPUBLICDOMAIN {
     reverse_proxy cic-custodial:5000
 }
+
+graph.YOURPUBLICDOMAIN P{
+    reverse_proxy cic-graph:8080
+}
