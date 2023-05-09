@@ -5,3 +5,7 @@ custodial.YOURPUBLICDOMAIN {
 graph.YOURPUBLICDOMAIN P{
     reverse_proxy cic-graph:8080
 }
+
+notify.YOURPUBLICDOMAIN P{
+    reverse_proxy cic-notify:5000
+}
