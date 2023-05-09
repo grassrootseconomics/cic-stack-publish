@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  cic-indexer:
+    image: jeffail/benthos:4
+    restart: unless-stopped
+    volumes:
+      - ./indexer.yaml:/benthos.yaml
+    networks:
+      - cic      
+networks:
+  cic:
+    external: true       
