@@ -9,7 +9,7 @@ input:
     deliver: all
 pipeline:
   processors:
-    - label: epoch_convert
+    - label: graph_transformer
       bloblang: |
         root = this
         root.timestamp = (this.timestamp).ts_format()
